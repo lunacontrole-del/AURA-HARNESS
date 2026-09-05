@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "paper_trade": true,
+  "execution_allowed": false,
+  "changed_status": 0,
+  "markers_written": 76,
+  "declared": 38,
+  "source": "matriz_paper_activate"
+}

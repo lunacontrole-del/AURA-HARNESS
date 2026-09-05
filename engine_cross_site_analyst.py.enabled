@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:cross_site_analyst.py
+path=engine/agents/cross_site_analyst.py
+status=enabled
+paper_trade=true

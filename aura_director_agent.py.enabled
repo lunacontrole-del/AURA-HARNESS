@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:aura_director_agent.py
+path=engine/aura_director_agent.py
+status=enabled
+paper_trade=true

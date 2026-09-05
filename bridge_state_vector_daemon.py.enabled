@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:state_vector_daemon.py
+path=bridge/cognitive/state_vector_daemon.py
+status=enabled
+paper_trade=true

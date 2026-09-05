@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:server.py
+path=bridge/server.py
+status=enabled
+paper_trade=true

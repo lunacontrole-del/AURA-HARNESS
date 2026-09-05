@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:execution_router.py
+path=engine/execution_router.py
+status=enabled
+paper_trade=true

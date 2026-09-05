@@ -1,0 +1,691 @@
+{
+  "version": "12.7.0-V25O-ALL-ACTIVATED+activated+activated+activated+activated",
+  "max_install": true,
+  "services": {
+    "bridge": {
+      "port": 8080,
+      "enabled": true,
+      "status": "enabled"
+    },
+    "engine": {
+      "port": 8765,
+      "enabled": true,
+      "status": "enabled"
+    },
+    "voice": {
+      "port": 8099,
+      "enabled": true,
+      "neural": "hercules",
+      "status": "enabled"
+    }
+  },
+  "agents": {
+    "engine:corner_intelligence.py": {
+      "path": "engine/corner_intelligence.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "analyze_corners",
+        "analyst_brief",
+        "count_since",
+        "p_at_least_one"
+      ],
+      "runnable_functions": [
+        "analyze_corners",
+        "analyst_brief",
+        "count_since",
+        "p_at_least_one"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:hawkes_corners.py": {
+      "path": "engine/hawkes_corners.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "p_at_least_one",
+        "classify_event",
+        "build_hawkes_from_payload"
+      ],
+      "runnable_functions": [
+        "p_at_least_one",
+        "classify_event",
+        "build_hawkes_from_payload"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:market_edge.py": {
+      "path": "engine/market_edge.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "normalize_market_name",
+        "classify_market",
+        "parse_odds_ts",
+        "odds_age_sec",
+        "compute_edge"
+      ],
+      "runnable_functions": [
+        "normalize_market_name",
+        "classify_market",
+        "parse_odds_ts",
+        "odds_age_sec",
+        "compute_edge"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:voice_planner.py": {
+      "path": "engine/voice_planner.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "plan_segments",
+        "build_ssml",
+        "narrative_from_card",
+        "apply_pronunciation",
+        "strip_forbidden_fillers"
+      ],
+      "runnable_functions": [
+        "plan_segments",
+        "build_ssml",
+        "narrative_from_card",
+        "apply_pronunciation",
+        "strip_forbidden_fillers"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:gpu_resource_manager.py": {
+      "path": "engine/gpu_resource_manager.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "cuda_info",
+        "resolve_cuda_device",
+        "recommended_voice_llm",
+        "status"
+      ],
+      "runnable_functions": [
+        "cuda_info",
+        "resolve_cuda_device",
+        "recommended_voice_llm",
+        "status"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:data_veracity.py": {
+      "path": "engine/data_veracity.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "verify_payload"
+      ],
+      "runnable_functions": [
+        "verify_payload"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:model_shadow.py": {
+      "path": "engine/model_shadow.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "poisson_at_least_one",
+        "baseline_from_payload",
+        "build_feature_vector",
+        "shadow_predict",
+        "validate"
+      ],
+      "runnable_functions": [
+        "poisson_at_least_one",
+        "baseline_from_payload",
+        "build_feature_vector",
+        "shadow_predict",
+        "validate"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:health_score.py": {
+      "path": "engine/reliability/health_score.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "record",
+        "score"
+      ],
+      "runnable_functions": [
+        "record",
+        "score"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:aura_director_agent.py": {
+      "path": "engine/aura_director_agent.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "engine:aura_quant_x_master.py": {
+      "path": "engine/aura_quant_x_master.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "health"
+      ],
+      "runnable_functions": [
+        "health"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:backtest_engine.py": {
+      "path": "engine/backtest_engine.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "run_backtest"
+      ],
+      "runnable_functions": [
+        "run_backtest"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:auto_calibrate_risk.py": {
+      "path": "engine/modules/auto_calibrate_risk.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "maybe_auto_calibrate"
+      ],
+      "runnable_functions": [
+        "maybe_auto_calibrate"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:drift_monitor.py": {
+      "path": "engine/improvements/drift_monitor.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "update",
+        "missing_rate",
+        "recent_alerts"
+      ],
+      "runnable_functions": [
+        "update",
+        "missing_rate",
+        "recent_alerts"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:execution_router.py": {
+      "path": "engine/execution_router.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "execute"
+      ],
+      "runnable_functions": [
+        "execute"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:digital_twin_monte_carlo.py": {
+      "path": "engine/digital_twin_monte_carlo.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "run_corner_probability"
+      ],
+      "runnable_functions": [
+        "run_corner_probability"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:server.py": {
+      "path": "engine/server.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "api_status",
+        "deep_diagnostic",
+        "performance_diagnostic"
+      ],
+      "runnable_functions": [
+        "api_status",
+        "deep_diagnostic",
+        "performance_diagnostic"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:engine_core.py": {
+      "path": "engine/engine_core.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "backend_info",
+        "init_db_wal"
+      ],
+      "runnable_functions": [
+        "backend_info",
+        "init_db_wal"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "engine:pre_treinar_gpu.py": {
+      "path": "engine/pre_treinar_gpu.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "bridge:server.py": {
+      "path": "bridge/server.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "extract_match_view",
+        "fingerprint",
+        "window_label",
+        "last_corner_gap",
+        "view_to_skill_pack",
+        "validate_skill_pack"
+      ],
+      "runnable_functions": [
+        "extract_match_view",
+        "fingerprint",
+        "window_label",
+        "last_corner_gap",
+        "view_to_skill_pack",
+        "validate_skill_pack"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:jarvis_voice_server.py": {
+      "path": "bridge/jarvis_voice_server.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "health",
+        "voice_diagnostic"
+      ],
+      "runnable_functions": [
+        "health",
+        "voice_diagnostic"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:emergency_bridge.py": {
+      "path": "bridge/emergency_bridge.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "now"
+      ],
+      "runnable_functions": [
+        "now"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:neural_tts.py": {
+      "path": "bridge/jarvis/modules/neural_tts.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "sanitize_for_speech",
+        "cache_stats",
+        "available"
+      ],
+      "runnable_functions": [
+        "sanitize_for_speech",
+        "cache_stats",
+        "available"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:tts.py": {
+      "path": "bridge/jarvis/modules/tts.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "bridge:stt.py": {
+      "path": "bridge/jarvis/modules/stt.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "bridge:gpu_resource_manager.py": {
+      "path": "bridge/jarvis/gpu_resource_manager.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "device_info",
+        "sample_vram",
+        "vram_snapshot",
+        "cleanup",
+        "profile"
+      ],
+      "runnable_functions": [
+        "device_info",
+        "sample_vram",
+        "vram_snapshot",
+        "cleanup",
+        "profile"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:jarvis_cognitive_server.py": {
+      "path": "bridge/cognitive/jarvis_cognitive_server.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "api_state",
+        "health"
+      ],
+      "runnable_functions": [
+        "api_state",
+        "health"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:multi_llm_router.py": {
+      "path": "bridge/cognitive/multi_llm_router.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "extract_intent"
+      ],
+      "runnable_functions": [
+        "extract_intent"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:state_vector_daemon.py": {
+      "path": "bridge/cognitive/state_vector_daemon.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [
+        "get_system_state",
+        "get_semantic_graph"
+      ],
+      "runnable_functions": [
+        "get_system_state",
+        "get_semantic_graph"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "bridge:tg_voice_pipeline.py": {
+      "path": "bridge/telegram/tg_voice_pipeline.py",
+      "status": "enabled",
+      "layer": "bridge",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "sre:omnipotent_health_profiler": {
+      "path": "engine/sre/omnipotent_health_profiler.py",
+      "status": "enabled",
+      "layer": "sre",
+      "actions": [
+        "run_full_diagnostic",
+        "check_memory_fragmentation",
+        "check_clock_skew",
+        "check_schema_drift",
+        "check_vram_fragmentation",
+        "predict_time_to_failure",
+        "check_phase_space",
+        "analyze_traces"
+      ],
+      "runnable_functions": [
+        "run_full_diagnostic",
+        "check_memory_fragmentation",
+        "check_clock_skew",
+        "check_schema_drift",
+        "check_vram_fragmentation",
+        "predict_time_to_failure",
+        "check_phase_space",
+        "analyze_traces"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true
+    },
+    "ui:central_nova": {
+      "path": "desktop/ui/matriz_v22/index.html",
+      "fallback_path": "desktop/ui/matriz/aura-quantx-central.html",
+      "status": "enabled",
+      "layer": "ui",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "voice:masculine_profile": {
+      "path": "bridge/jarvis/config_voice_masculina.yaml",
+      "status": "enabled",
+      "layer": "voice",
+      "actions": [],
+      "runnable_functions": [],
+      "implementation_state": "inspect",
+      "paper_trade": true
+    },
+    "agents:corner_independent_v7": {
+      "path": "agents/corner_independent/corner_window_specialist.py",
+      "status": "enabled",
+      "layer": "agents",
+      "actions": [
+        "evaluate",
+        "observe",
+        "prepare",
+        "no_bet"
+      ],
+      "runnable_functions": [
+        "evaluate"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true,
+      "execution_allowed": false,
+      "advisory_only": true,
+      "windows": [
+        "35_ht",
+        "85_ft"
+      ]
+    },
+    "agents:mora_master_agent": {
+      "path": "engine/mora_daily_pipeline.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "pause_system",
+        "run_daily_audit",
+        "research_market",
+        "generate_upgrade_report",
+        "release_system"
+      ],
+      "runnable_functions": [
+        "run",
+        "acquire_resources",
+        "release_resources",
+        "get_status"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true,
+      "execution_allowed": false,
+      "advisory_only": true,
+      "schedule": "0 3 * * *",
+      "timeout_sec": 1800,
+      "gpu_limit_percent": 0.85,
+      "pausable_layers": [
+        "bridge",
+        "agents"
+      ],
+      "critical_layers_preserved": [
+        "engine",
+        "sre"
+      ],
+      "invariants_protected": {
+        "paper_trade": true,
+        "execution_allowed": false,
+        "GLM_ADVISORY_ONLY": true
+      },
+      "components": {
+        "resource_orchestrator": "engine/mora_resource_orchestrator.py",
+        "daily_pipeline": "engine/mora_daily_pipeline.py",
+        "trigger_script": "scripts/aura_mora_daily_trigger.py"
+      },
+      "output": {
+        "report_dir": "data/mora_reports/",
+        "report_format": "MORA_DAILY_REPORT_YYYYMMDD.md",
+        "lock_file": "data/.mora_running.lock"
+      }
+    },
+    "engine:browser_agent.py": {
+      "path": "engine/agents/browser_agent.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "launch",
+        "start_capture",
+        "extract_view",
+        "ask_glm",
+        "navigate"
+      ],
+      "runnable_functions": [
+        "BrowserAgent",
+        "BROWSER",
+        "BROWSER_FULL"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true,
+      "version": "4.0.0",
+      "description": "Navegador integrado lite/full + interceptacao API SokkerPRO"
+    },
+    "engine:cross_site_analyst.py": {
+      "path": "engine/agents/cross_site_analyst.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "collect_tips",
+        "run_once",
+        "start_loop",
+        "register_site"
+      ],
+      "runnable_functions": [
+        "CrossSiteAnalyst",
+        "ANALYST",
+        "TipsterReputation"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true,
+      "version": "2.0.0",
+      "description": "Coletor inteligente de tips + Telegram + reputacao"
+    },
+    "engine:odds_quality_monitor.py": {
+      "path": "engine/agents/odds_quality_monitor.py",
+      "status": "enabled",
+      "layer": "engine",
+      "actions": [
+        "ingest_from_view",
+        "evaluate",
+        "attach_to_view"
+      ],
+      "runnable_functions": [
+        "OddsQualityMonitor",
+        "ODDS_MONITOR"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true,
+      "version": "1.0.0",
+      "description": "Monitor de qualidade de odds (freshness/spikes/score)"
+    },
+    "engine:cache_integration.py": {
+      "path": "engine/core/cache_integration.py",
+      "status": "enabled",
+      "layer": "core",
+      "actions": [
+        "start_cache_management",
+        "cache_stats"
+      ],
+      "runnable_functions": [
+        "start_cache_management",
+        "CACHE"
+      ],
+      "implementation_state": "runnable",
+      "paper_trade": true,
+      "version": "1.0.0",
+      "description": "Limpeza automatica de RAM via AutonomousCache"
+    }
+  },
+  "tools": {
+    "edge_tts": true,
+    "monte_carlo_digital_twin": true,
+    "hawkes_corners": true,
+    "corner_intelligence": true,
+    "market_edge": true,
+    "sre_profiler": true,
+    "emergency_bridge": true,
+    "neural_tts": true,
+    "gpu_resource_manager": true,
+    "data_veracity": true,
+    "model_shadow": true,
+    "director_agent": true,
+    "central_nova": true
+  },
+  "phases": 8,
+  "agent_count": 38,
+  "tool_count": 13,
+  "phase": 8,
+  "installer": "AURA_INSTALAR_E_INICIAR_TUDO.bat",
+  "agent_menu": "extensao/visao/sidepanel.html#agentes",
+  "digital_twin_decision_route": true,
+  "core_v13": {
+    "port": 8088,
+    "bat": "ARQUIVO_LEGADO/BAT_PS1/START_CORE_SYSTEM.bat"
+  },
+  "meta": {
+    "declared": 34,
+    "runnable_allowlist": 27,
+    "total_functions": 77,
+    "agent_count": 33,
+    "v25_note": "agent_count aligned to agents dict",
+    "activation": "max",
+    "interface": "enabled"
+  },
+  "paper_trade": true,
+  "execution_allowed": false,
+  "activated_at": "2026-08-24T11:22:44.324621+00:00"
+}

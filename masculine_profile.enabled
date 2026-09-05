@@ -1,0 +1,7 @@
+enabled=true
+agent_id=voice:masculine_profile
+path=bridge/jarvis/config_voice_masculina.yaml
+status=enabled
+paper_trade=true
+implementation_state=inspect
+actions=

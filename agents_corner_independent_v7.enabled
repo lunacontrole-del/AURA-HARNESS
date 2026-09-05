@@ -1,0 +1,5 @@
+enabled=true
+agent_id=agents:corner_independent_v7
+path=agents/corner_independent/corner_window_specialist.py
+status=enabled
+paper_trade=true

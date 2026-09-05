@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:model_shadow.py
+path=engine/model_shadow.py
+status=enabled
+paper_trade=true

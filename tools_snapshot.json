@@ -1,0 +1,395 @@
+{
+  "ok": true,
+  "paper_trade": true,
+  "execution_allowed": false,
+  "source": "RUNNABLE_FUNCTIONS",
+  "tool_count": 77,
+  "tools": [
+    {
+      "agent_id": "engine:corner_intelligence.py",
+      "function": "analyze_corners",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:corner_intelligence.py",
+      "function": "analyst_brief",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:corner_intelligence.py",
+      "function": "count_since",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:corner_intelligence.py",
+      "function": "p_at_least_one",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:hawkes_corners.py",
+      "function": "p_at_least_one",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:hawkes_corners.py",
+      "function": "classify_event",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:hawkes_corners.py",
+      "function": "build_hawkes_from_payload",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:market_edge.py",
+      "function": "normalize_market_name",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:market_edge.py",
+      "function": "classify_market",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:market_edge.py",
+      "function": "parse_odds_ts",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:market_edge.py",
+      "function": "odds_age_sec",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:market_edge.py",
+      "function": "compute_edge",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:voice_planner.py",
+      "function": "plan_segments",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:voice_planner.py",
+      "function": "build_ssml",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:voice_planner.py",
+      "function": "narrative_from_card",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:voice_planner.py",
+      "function": "apply_pronunciation",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:voice_planner.py",
+      "function": "strip_forbidden_fillers",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:gpu_resource_manager.py",
+      "function": "cuda_info",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:gpu_resource_manager.py",
+      "function": "resolve_cuda_device",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:gpu_resource_manager.py",
+      "function": "recommended_voice_llm",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:gpu_resource_manager.py",
+      "function": "status",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:data_veracity.py",
+      "function": "verify_payload",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:model_shadow.py",
+      "function": "poisson_at_least_one",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:model_shadow.py",
+      "function": "baseline_from_payload",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:model_shadow.py",
+      "function": "build_feature_vector",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:model_shadow.py",
+      "function": "shadow_predict",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:model_shadow.py",
+      "function": "validate",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:backtest_engine.py",
+      "function": "run_backtest",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:digital_twin_monte_carlo.py",
+      "function": "run_corner_probability",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:execution_router.py",
+      "function": "execute",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:health_score.py",
+      "function": "record",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:health_score.py",
+      "function": "score",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:drift_monitor.py",
+      "function": "update",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:drift_monitor.py",
+      "function": "missing_rate",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:drift_monitor.py",
+      "function": "recent_alerts",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:server.py",
+      "function": "extract_match_view",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:server.py",
+      "function": "fingerprint",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:server.py",
+      "function": "window_label",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:server.py",
+      "function": "last_corner_gap",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:server.py",
+      "function": "view_to_skill_pack",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:server.py",
+      "function": "validate_skill_pack",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:neural_tts.py",
+      "function": "sanitize_for_speech",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:neural_tts.py",
+      "function": "cache_stats",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:neural_tts.py",
+      "function": "available",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:gpu_resource_manager.py",
+      "function": "device_info",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:gpu_resource_manager.py",
+      "function": "sample_vram",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:gpu_resource_manager.py",
+      "function": "vram_snapshot",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:gpu_resource_manager.py",
+      "function": "cleanup",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:gpu_resource_manager.py",
+      "function": "profile",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:multi_llm_router.py",
+      "function": "extract_intent",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:state_vector_daemon.py",
+      "function": "get_system_state",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:state_vector_daemon.py",
+      "function": "get_semantic_graph",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "run_full_diagnostic",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "check_memory_fragmentation",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "check_clock_skew",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "check_schema_drift",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "check_vram_fragmentation",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "predict_time_to_failure",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "check_phase_space",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "sre:omnipotent_health_profiler",
+      "function": "analyze_traces",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:engine_core.py",
+      "function": "backend_info",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:engine_core.py",
+      "function": "init_db_wal",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:auto_calibrate_risk.py",
+      "function": "maybe_auto_calibrate",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server_gpu_master.py",
+      "function": "get_analysis",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server_gpu_master.py",
+      "function": "get_skill_formatted_context",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server_gpu_master.py",
+      "function": "health",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server_gpu_master.py",
+      "function": "status",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server_elite_gpu.py",
+      "function": "health",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:aura_quant_x_master.py",
+      "function": "health",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:jarvis_voice_server.py",
+      "function": "health",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:jarvis_voice_server.py",
+      "function": "voice_diagnostic",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:jarvis_cognitive_server.py",
+      "function": "api_state",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:jarvis_cognitive_server.py",
+      "function": "health",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "bridge:emergency_bridge.py",
+      "function": "now",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server.py",
+      "function": "api_status",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server.py",
+      "function": "deep_diagnostic",
+      "paper_trade": true
+    },
+    {
+      "agent_id": "engine:server.py",
+      "function": "performance_diagnostic",
+      "paper_trade": true
+    }
+  ],
+  "runnable_agents": 27
+}

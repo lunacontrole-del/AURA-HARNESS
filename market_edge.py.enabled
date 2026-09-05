@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:market_edge.py
+path=engine/market_edge.py
+status=enabled
+paper_trade=true

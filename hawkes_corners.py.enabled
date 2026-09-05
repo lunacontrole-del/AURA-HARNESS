@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:hawkes_corners.py
+path=engine/hawkes_corners.py
+status=enabled
+paper_trade=true

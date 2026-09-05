@@ -1,0 +1,5 @@
+enabled=true
+agent_id=ui:central_nova
+path=interface
+status=enabled
+paper_trade=true

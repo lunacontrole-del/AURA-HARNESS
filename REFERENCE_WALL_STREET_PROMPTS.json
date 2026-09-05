@@ -1,0 +1,59 @@
+{
+  "source": "https://www.instagram.com/p/DcOVf5ckVPS/?img_index=1",
+  "post_id": "DcOVf5ckVPS",
+  "author": "@guilhermemorais.ia",
+  "title": "CLAUDE CONSEGUE ANALISAR QUALQUER AÇÃO COMO UM ANALISTA DE WALL STREET. ESSES 10 PROMPTS DESTRAVAM SEU PODER",
+  "count": 10,
+  "prompts": [
+    {
+      "number": 1,
+      "title": "STOCK SCREENER NÍVEL GOLDMAN SACHS",
+      "prompt": "\"Você é um analista de equity sênior no Goldman Sachs com 20 anos de experiência selecionando ações pra clientes de alto patrimônio. Preciso de um framework completo de screening de ações pros meus objetivos de investimento. Analise e entregue: top 10 ações que combinam com meus critérios com ticker, análise de P/L comparado à média do setor, tendência de crescimento de receita dos últimos 5 anos, saúde de dívida sobre patrimônio pra cada escolha, yield de dividendo e sustentabilidade de payout, rating de moat competitivo (fraco, médio, forte), preços-alvo bull e bear pros próximos 12 meses, rating de risco de 1 a 10 com raciocínio claro, zonas de entrada e sugestão de stop-loss. Formate como relatório profissional de equity research com tabela resumo. Meu perfil: [tolerância a risco, valor de investimento, horizonte de tempo e setores preferidos].\""
+    },
+    {
+      "number": 2,
+      "title": "ANÁLISE DE VALUATION DCF ESTILO MORGAN STANLEY",
+      "prompt": "\"Você é um investment banker nível VP no Morgan Stanley que constrói modelos de valuation pra deals de M&A da Fortune 500. Preciso de uma análise de fluxo de caixa descontado completa pra uma ação específica. Construa: projeção de receita de 5 anos com premissas de crescimento, estimativas de margem operacional baseadas em tendências históricas, cálculo de fluxo de caixa livre ano a ano, custo médio ponderado de capital (WACC), valor terminal usando exit multiple e perpetuity growth, tabela de sensibilidade mostrando fair value em diferentes taxas de desconto, comparação DCF vs preço atual, veredito claro (subvalorizada, justamente valorizada ou sobrevalorizada), premissas-chave que podem quebrar o modelo. Formate como memo de valuation de investment banking com tabela e matemática clara. Ação a valorar: [ticker e nome].\""
+    },
+    {
+      "number": 3,
+      "title": "FRAMEWORK DE ANÁLISE DE RISCO INSPIRADO NA BRIDGEWATER",
+      "prompt": "\"Você é um analista de risco sênior na Bridgewater Associates treinado nos princípios de transparência radical do Ray Dalio pra investimento. Preciso de uma avaliação de risco completa do meu portfólio atual. Avalie: análise de correlação entre meus ativos, risco de concentração setorial com breakdown percentual, exposição geográfica e fatores de risco cambial, sensibilidade a taxa de juros pra cada posição, stress test de recessão mostrando drawdown estimado, rating de risco de liquidez pra cada holding, risco por ação e recomendação de dimensionamento, cenários de tail risk com estimativa de probabilidade, estratégias de hedge pra reduzir meus 3 principais riscos, sugestões de rebalanceamento com alocação específica. Formate como relatório profissional de risk management com heatmap. Meu portfólio: [listar holdings com percentuais aproximados e valor total].\""
+    },
+    {
+      "number": 4,
+      "title": "BREAKDOWN DE RESULTADOS NÍVEL JPMORGAN",
+      "prompt": "\"Você é um analista sênior de equity research no JPMorgan Chase que escreve prévias de resultados pra investidores institucionais. Preciso de uma análise completa de resultados antes de uma empresa reportar. Entregue: últimos 4 trimestres de resultados vs estimativas (histórico de beat ou miss), consenso de receita e EPS pro próximo trimestre, métricas-chave que Wall Street tá observando pra essa empresa específica, breakdown de receita por segmento e tendências, resumo do guidance da última call, movimento implícito no options market pro dia do resultado, reação histórica do preço da ação após os últimos 4 resultados, cenário bull e estimativa de impacto no preço, cenário bear e estimativa de risco de queda, minha jogada recomendada (comprar antes, vender antes ou esperar). Formate como brief de research pré-resultado com resumo de decisão no topo. Empresa que vai reportar: [nome da empresa e data do resultado se souber].\""
+    },
+    {
+      "number": 5,
+      "title": "MODELO DE CONSTRUÇÃO DE PORTFÓLIO ESTILO BLACKROCK",
+      "prompt": "\"Você é um estrategista de portfólio sênior na BlackRock gerenciando portfólios multi-ativos de mais de 500 milhões pra clientes institucionais. Preciso de um portfólio de investimento customizado construído do zero pra minha situação. Crie: alocação exata de ativos com percentuais entre ações, títulos e alternativos, recomendações específicas de ETF ou fundo pra cada categoria com ticker, holdings core vs satélite claramente identificadas, faixa de retorno anual esperada baseada em dados históricos, drawdown máximo esperado em ano ruim, cronograma de rebalanceamento e regras de gatilho, estratégia de eficiência fiscal pro meu tipo de conta, plano de dollar cost averaging se eu investir mensalmente, benchmark pra medir minha performance, statement de política de investimento de uma página que eu possa seguir. Formate como documento profissional de investment policy com descrição de pie chart de alocação. Meus dados: [idade, renda, poupança, objetivos, tolerância a risco e tipo de conta].\""
+    },
+    {
+      "number": 6,
+      "title": "SISTEMA DE ANÁLISE TÉCNICA NÍVEL CITADEL",
+      "prompt": "\"Você é um trader quantitativo sênior na Citadel que combina análise técnica com modelos estatísticos pra timing de entradas e saídas. Preciso de um breakdown completo de análise técnica de uma ação. Analise: direção da tendência atual em timeframe diário, semanal e mensal, níveis-chave de suporte e resistência com preços exatos, análise de médias móveis (50, 100 e 200 dias) e sinais de cruzamento, leituras de RSI, MACD e Bandas de Bollinger com interpretação em linguagem simples, análise de tendência de volume e o que sinaliza sobre força de compradores vs vendedores, identificação de padrões de gráfico (ombro-cabeça-ombro, xícara com alça, etc.), níveis de retração de Fibonacci pra zonas de bounce potenciais, preço ideal de entrada, nível de stop-loss e target de lucro, ratio risco-retorno pra trade atual, rating de confiança (compra forte, compra, neutro, venda, venda forte). Formate como relatório técnico de análise com plano de trade claro. Ação pra analisar: [ticker e posição atual se houver].\""
+    },
+    {
+      "number": 7,
+      "title": "ESTRATÉGIA DE DIVIDENDOS INSPIRADA NO ENDOWMENT DE HARVARD",
+      "prompt": "\"Você é o Chief Investment Strategist do endowment de 50 bilhões da Harvard especializado em estratégias de equity geradoras de renda. Preciso de um portfólio de renda por dividendo que gere renda passiva confiável. Construa: 15 a 20 escolhas de ações com dividendo com ticker e yield atual, dividend safety score pra cada ação (escala 1 a 10), anos consecutivos de crescimento de dividendo pra cada escolha, análise de payout ratio pra sinalizar dividendos não sustentáveis, projeção de renda mensal baseada no meu valor de investimento, breakdown de diversificação setorial pra evitar concentração, estimativa de taxa de crescimento de dividendo pros próximos 5 anos, projeção de reinvestimento DRIP mostrando composição em 10 anos, resumo de implicações fiscais pra dividendos no meu tipo de conta, lista ranqueada do mais seguro ao mais agressivo. Formate como blueprint de portfólio de dividendos com tabela de projeção de renda. Minha situação: [valor total de investimento, meta de renda mensal, tipo de conta e faixa fiscal].\""
+    },
+    {
+      "number": 8,
+      "title": "ANÁLISE DE VANTAGEM COMPETITIVA ESTILO BAIN",
+      "prompt": "\"Você é um partner sênior na Bain & Company conduzindo análise de estratégia competitiva pra um grande fundo de investimento avaliando um setor. Preciso de um relatório completo de landscape competitivo pra achar a melhor ação pra comprar no setor. Entregue: top 5 a 7 concorrentes no setor com comparação de market cap, comparação de receita e margem de lucro em formato de tabela, análise de moat competitivo pra cada empresa (marca, custo, network, switching), tendências de market share nos últimos 3 anos, rating de qualidade de gestão baseado em histórico de alocação de capital, comparação de pipeline de inovação e gasto em P&D, maiores ameaças ao setor (regulação, disrupção, macro), análise SWOT pras 2 principais empresas, minha única melhor escolha de ação com rationale claro, catalisadores que podem mover a ação vencedora nos próximos 12 meses. Formate como deck estilo Bain de estratégia competitiva com tabelas de comparação. Setor que quero analisar: [nome do setor ou indústria].\""
+    },
+    {
+      "number": 9,
+      "title": "IDENTIFICADOR DE PADRÕES DA RENAISSANCE TECHNOLOGIES",
+      "prompt": "\"Você é um quantitative researcher na Renaissance Technologies usando métodos data-driven pra achar edges estatísticos no mercado de ações. Preciso que você identifique padrões escondidos e anomalias no comportamento de uma ação. Pesquise: padrões sazonais (melhores e piores meses historicamente), padrões de performance por dia da semana se existirem, correlação com eventos macro importantes (reuniões do Fed, dados de CPI), padrões de compra e venda de insiders em filings recentes, tendência de institutional ownership (grandes fundos comprando ou vendendo), análise de short interest e potencial de squeeze, sinais de atividade de options incomuns dignos de observação, comportamento de preço em torno de resultados (padrões pre-run, post-gap), sinais de rotação setorial que afetam essa ação, resumo do statistical edge (o que dá a essa ação uma vantagem quantificável). Formate como memo de research quantitativo com tabelas de dados e resumos de padrões. Ação pra investigar: [ticker e período de tempo que você se importa].\""
+    },
+    {
+      "number": 10,
+      "title": "AVALIAÇÃO DE IMPACTO MACRO NÍVEL MCKINSEY",
+      "prompt": "\"Você é um partner sênior no McKinsey Global Institute que aconselha sovereign wealth funds sobre como tendências macroeconômicas afetam mercados de equity. Preciso de uma análise macro mostrando como as condições econômicas atuais afetam meu portfólio. Analise: ambiente atual de taxa de juros e seu impacto em ações de crescimento vs valor, análise de tendências de inflação e quais setores beneficiam ou sofrem, previsão de crescimento do PIB e o que significa pros lucros corporativos, impacto da força do dólar em holdings internacionais vs domésticas, tendências de dados de emprego e implicações no consumo, outlook de política do Federal Reserve pros próximos 6 a 12 meses, fatores de risco global (geopolítica, guerras comerciais, cadeias de suprimento), recomendação de rotação setorial baseada no ciclo econômico atual, ajustes específicos no portfólio que devo considerar agora, timeline de quando esses fatores macro provavelmente impactam mercados. Formate como briefing executivo de estratégia macro com plano de ação claro. Meu portfólio atual: [listar portfólio e descrever maior preocupação com a economia].\""
+    }
+  ]
+}

@@ -1,0 +1,922 @@
+{
+  "memory_version": "corner-pattern-memory-v7-six-attachment-curated",
+  "purpose": "Experiência operacional revisada para análise advisory de escanteios; não substitui treino estatístico.",
+  "source_summary": {
+    "files_reviewed": 38,
+    "structured_labeled_records": 26,
+    "narrative_records": 71,
+    "green": 36,
+    "red": 25,
+    "push": 3,
+    "unknown": 7,
+    "additional_files_reviewed": 2,
+    "additional_blocks_reviewed": 110,
+    "latest_file": "BRASILEIRAO_2026_AGENTE_IA_TREINAMENTO.py",
+    "latest_file_status": "audited_rejected_as_trainer",
+    "latest_file_lines": 2721,
+    "summary_file": "pasted_content_8.txt",
+    "latest_attachment_batch": {
+      "batch_id": "six-attachments-2026-08-22",
+      "files": [
+        {
+          "name": "BRASILEIRAO_2026_DADOS_REAIS_OFICIAIS.md",
+          "status": "league_snapshot_context_only",
+          "role": "claimed_series_a_snapshot",
+          "sha256": "4cfd77ec73483c5d51121266892556a5b339201d073106c0871ca9e1780fb711"
+        },
+        {
+          "name": "pasted_content_9.txt",
+          "status": "summary_reference_only",
+          "role": "summary_of_series_a_claims",
+          "sha256": "dd139a363908c344267b59531e78a586e55d455c8595a2e6e7536a493004a7f6"
+        },
+        {
+          "name": "BRASILEIRAO_SERIE_B_2026_DADOS_REAIS_OFICIAIS.md",
+          "status": "league_snapshot_quarantined",
+          "role": "unverified_series_b_snapshot",
+          "sha256": "95d7869dff9ee63afc105045c8f7f9c038285e59c2d4a314a24a50c9f323d264"
+        },
+        {
+          "name": "pasted_content_10.txt",
+          "status": "summary_reference_only",
+          "role": "summary_of_series_b_claims",
+          "sha256": "8d57b169f6c2375e9a69e50ba6dae6646ab7e0e406635cf82a2d3f21e5135e85"
+        },
+        {
+          "name": "pasted_content_11.txt",
+          "status": "training_reference_rejected",
+          "role": "description_of_unsafe_random_trainer",
+          "sha256": "863f166a8ca7db1b25a65b49644bfd85271030a844de4e43e99214287b9ff261"
+        },
+        {
+          "name": "BRASILEIRAO_2026_AGENTE_IA_TREINAMENTO.py",
+          "status": "training_reference_rejected",
+          "role": "unsafe_random_synthetic_trainer",
+          "sha256": "9550a97a81df9115749bc82025118db6b63103ef1c02881851c51f3bee544745"
+        }
+      ],
+      "curation_decision": "context_loaded_only; no synthetic_training; no_live_promotion",
+      "trainer_decision": "REJECT_AS_TRAINER_KEEP_AS_REFERENCE_ONLY",
+      "paper_trade": true,
+      "execution_allowed": false
+    }
+  },
+  "windows": {
+    "HT_35_TO_INTERVAL": {
+      "base_minute": 35,
+      "period": "first_half",
+      "allow_pre_alert": true
+    },
+    "FT_85_TO_END": {
+      "base_minute": 85,
+      "period": "second_half",
+      "allow_pre_alert": true
+    }
+  },
+  "patterns": [
+    {
+      "id": "P_GREEN_HT_ACCELERATION",
+      "label": "aceleracao_pre_intervalo",
+      "class": "GREEN_PATTERN",
+      "window": "HT_35_TO_INTERVAL",
+      "features": [
+        "recent_corners_rate",
+        "crosses_blocked_last_5m",
+        "lateral_attack_rate",
+        "score_urgency"
+      ],
+      "rule": "Aceleração sustentada e pressão lateral perto do intervalo merece OBSERVE, nunca execução automática.",
+      "evidence": "narrative_green",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1483-1493",
+        "DocumentodoGoogleKeep(1).docx.txt:1361-1376"
+      ]
+    },
+    {
+      "id": "P_GREEN_LATE_GOAL_REACTIVATION",
+      "label": "gol_recente_reativa_pressao",
+      "class": "GREEN_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "goal_in_last_5m",
+        "score_urgency",
+        "crosses_blocked_last_5m",
+        "effective_play_time"
+      ],
+      "rule": "Gol recente pode reabrir a urgência, mas só deve elevar OBSERVE quando houver pressão lateral contemporânea.",
+      "evidence": "narrative_green",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1501-1513"
+      ]
+    },
+    {
+      "id": "P_RED_STERILE_POSSESSION",
+      "label": "posse_estéril",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "territorial_pressure",
+        "lateral_attack_rate",
+        "blocked_shots",
+        "shots_total"
+      ],
+      "rule": "Posse ou ataques altos sem conversão lateral e sem bloqueios recentes devem reduzir fortemente o score.",
+      "evidence": "narrative_red",
+      "confidence": "candidate",
+      "source_refs": [
+        "CONHECIMENTO(1).txt:94-97",
+        "DocumentodoGoogleKeep(1).docx.txt:1394-1407",
+        "DocumentodoGoogleKeep(1).docx.txt:1514-1531"
+      ]
+    },
+    {
+      "id": "P_RED_FRAGMENTATION",
+      "label": "jogo_picotado",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "fouls_last_5m",
+        "substitutions_after_75",
+        "effective_play_time"
+      ],
+      "rule": "Faltas, cera e muitas substituições reduzem o tempo efetivo e devem bloquear o sinal.",
+      "evidence": "narrative_red",
+      "confidence": "candidate",
+      "source_refs": [
+        "CONHECIMENTO(1).txt:112-128",
+        "DocumentodoGoogleKeep(1).docx.txt:1494-1500",
+        "DocumentodoGoogleKeep(1).docx.txt:1514-1531"
+      ]
+    },
+    {
+      "id": "P_RED_DEEP_BLOCK",
+      "label": "bloco_baixo_resistente",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "crosses_blocked_last_5m",
+        "lateral_attack_rate",
+        "minutes_since_last_corner",
+        "blocked_shots"
+      ],
+      "rule": "Bloco baixo que força tiro de meta, defesa do goleiro ou chute central não equivale a conversão em escanteio.",
+      "evidence": "narrative_red",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1426-1443",
+        "DocumentodoGoogleKeep(1).docx.txt:1586-1607"
+      ]
+    },
+    {
+      "id": "P_RED_LONG_CORNER_GAP",
+      "label": "lacuna_sem_escanteio",
+      "class": "RED_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "minutes_since_last_corner",
+        "pressure_index",
+        "lateral_attack_rate"
+      ],
+      "rule": "Lacuna superior a 15 minutos exige NO_BET ou confirmação adicional mesmo com domínio territorial.",
+      "evidence": "narrative_red",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1586-1604"
+      ]
+    },
+    {
+      "id": "P_RED_LATE_FRIENDLY",
+      "label": "amistoso_reta_final",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "match_type",
+        "substitutions_after_75",
+        "effective_play_time"
+      ],
+      "rule": "Amistosos e pré-temporada recebem penalização por substituições e intensidade não estacionária.",
+      "evidence": "narrative_red",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1514-1531",
+        "DocumentodoGoogleKeep(1).docx.txt:1575-1585"
+      ]
+    },
+    {
+      "id": "P_PUSH_ASIAN_LINE",
+      "label": "linha_inteira_push",
+      "class": "PUSH_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "asian_line",
+        "total_corners"
+      ],
+      "rule": "Push é resultado distinto de Green/Red e não deve ser convertido em vitória ou derrota durante o treino.",
+      "evidence": "narrative_push",
+      "confidence": "candidate",
+      "source_refs": [
+        "CONHECIMENTO(1).txt:10-18",
+        "DocumentodoGoogleKeep(1).docx.txt:1459-1470",
+        "DocumentodoGoogleKeep(1).docx.txt:1717-1723"
+      ]
+    },
+    {
+      "id": "P_NO_ENTRY_TIME_GUARD",
+      "label": "recusa_por_tempo",
+      "class": "NO_ENTRY_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "base_minute",
+        "stoppage_time",
+        "effective_play_time"
+      ],
+      "rule": "Pré-alerta pode preparar, mas a janela expirada ou sem confirmação de acréscimos mantém NO_BET.",
+      "evidence": "narrative_no_entry",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1532-1552",
+        "DocumentodoGoogleKeep(1).docx.txt:1608-1618"
+      ]
+    },
+    {
+      "id": "P_PREALERT_WAIT_EARLY_HT",
+      "label": "pre_alerta_aguardar_confirmacao",
+      "class": "NO_ENTRY_PATTERN",
+      "window": "HT_35_TO_INTERVAL",
+      "features": [
+        "minute",
+        "corners_total",
+        "attacks_per_minute",
+        "blocked_shots",
+        "recent_crosses"
+      ],
+      "rule": "Antes da janela crítica, um alerta prepara a observação; não converter projeção de cantos em entrada sem confirmação de pressão sustentada.",
+      "evidence": "structured_narrative",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(4).md:1-41"
+      ]
+    },
+    {
+      "id": "P_GREEN_LATE_HT_ACCELERATION",
+      "label": "aceleracao_tardia_ht",
+      "class": "GREEN_PATTERN",
+      "window": "HT_35_TO_INTERVAL",
+      "features": [
+        "corners_total",
+        "recent_crosses",
+        "crosses_blocked_last_5m",
+        "stoppage_time"
+      ],
+      "rule": "Aceleração de cruzamentos e cantos nos minutos finais/acréscimos pode superar a leitura linear inicial; observar sem usar o resultado futuro como feature.",
+      "evidence": "missed_green_postmortem",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(3).md:126-142",
+        "DocumentodoGoogleKeep(4).md:28-41"
+      ]
+    },
+    {
+      "id": "P_RED_HIGH_POSSESSION_STALL",
+      "label": "posse_alta_estagnada",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "possession",
+        "attacks_per_minute",
+        "minutes_since_last_corner",
+        "lateral_attack_rate"
+      ],
+      "rule": "Posse alta com cantos estagnados e baixa conversão lateral deve reduzir confiança; a regra pode ser anulada apenas por nova aceleração observada no snapshot atual.",
+      "evidence": "red_and_missed_green",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(3).md:126-142",
+        "DocumentodoGoogleKeep(4).md:177-187"
+      ]
+    },
+    {
+      "id": "P_GREEN_KNOCKOUT_URGENCY",
+      "label": "urgencia_eliminatoria",
+      "class": "GREEN_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "score_diff",
+        "competition_phase",
+        "crosses",
+        "shots_total",
+        "corners_total"
+      ],
+      "rule": "Empate ou desvantagem em eliminatória pode elevar urgência, mas exige cruzamentos/bloqueios contemporâneos antes de OBSERVE.",
+      "evidence": "narrative_green",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(3).md:144-152"
+      ]
+    },
+    {
+      "id": "P_RED_ELASTIC_SCORE_OUTLIER",
+      "label": "placar_elastico_outlier",
+      "class": "RED_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "score_diff",
+        "attacks_per_minute",
+        "corners_total",
+        "shots_total",
+        "regional_context"
+      ],
+      "rule": "Manter bloqueio conservador em diferença de 2+ gols; outliers regionais devem gerar monitoramento e relatório, não liberação automática.",
+      "evidence": "missed_green_outlier",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(3).md:1-110",
+        "DocumentodoGoogleKeep(4).md:297-320"
+      ]
+    },
+    {
+      "id": "P_GREEN_LATE_DRAW_WITH_CROSSING",
+      "label": "empate_com_conversao_lateral",
+      "class": "GREEN_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "score_diff",
+        "corners_total",
+        "crosses",
+        "shots_total",
+        "dangerous_attacks"
+      ],
+      "rule": "Empate tardio não é bloqueio absoluto: permitir apenas OBSERVE quando houver pressão lateral, cruzamentos e volume de área no snapshot.",
+      "evidence": "narrative_green",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(3).md:144-152",
+        "DocumentodoGoogleKeep(4).md:265-291"
+      ]
+    },
+    {
+      "id": "P_RED_CORNER_STAGNATION",
+      "label": "estagnacao_de_cantos",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "minutes_since_last_corner",
+        "corners_total",
+        "attacks_per_minute",
+        "blocked_shots"
+      ],
+      "rule": "Domínio bruto não compensa uma lacuna prolongada sem cantos; exigir mudança recente observável antes de elevar confiança.",
+      "evidence": "narrative_red",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(1).docx.txt:1630-1638",
+        "DocumentodoGoogleKeep(1).docx.txt:1586-1607"
+      ]
+    },
+    {
+      "id": "P_PUSH_KEEP_DISTINCT",
+      "label": "push_como_classe_distinta",
+      "class": "PUSH_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "asian_line",
+        "total_corners",
+        "line_result"
+      ],
+      "rule": "Push/reembolso permanece classe própria na memória; não deve ser transformado em Green nem Red no treino.",
+      "evidence": "structured_narrative",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(4).md:139-151"
+      ]
+    },
+    {
+      "id": "P_FT_APPM5_DECISIVE",
+      "label": "appm_5_ft_decisivo",
+      "class": "GREEN_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "appm_5min",
+        "appm_10min",
+        "diff_appm_5",
+        "appm_3min"
+      ],
+      "rule": "Na janela FT, APPM 5 do time que pressiona acima de 0.6, idealmente crescente sobre APPM 10, é confirmação necessária para OBSERVE; abaixo de 0.3 é bloqueio.",
+      "evidence": "pasted_pattern_summary",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:20-41",
+        "pasted_content_6.txt:57-70"
+      ]
+    },
+    {
+      "id": "P_FT_PRESSURE_DIFF",
+      "label": "pressao_diferencial_ft",
+      "class": "GREEN_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "diff_pressao1",
+        "diff_pressao2",
+        "superioridade_dominante"
+      ],
+      "rule": "Pressão diferencial superior a +10 e aproximação de área acima de +5 fortalecem o sinal, mas não substituem momentum recente.",
+      "evidence": "pasted_pattern_summary",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:29-41"
+      ]
+    },
+    {
+      "id": "P_FT_SHOT_CONVERSION",
+      "label": "conversao_por_finalizacao_ft",
+      "class": "GREEN_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "shots_total",
+        "shots_on_target",
+        "crosses_blocked_last_5m",
+        "blocked_shots"
+      ],
+      "rule": "Volume de finalizações e chutes no alvo deve ser acompanhado de conversão lateral/bloqueios; domínio sem finalização é estéril.",
+      "evidence": "pasted_pattern_summary",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:33-41",
+        "pasted_content_6.txt:99-117"
+      ]
+    },
+    {
+      "id": "P_FT_LOW_MOMENTUM_KILL",
+      "label": "appm5_baixo_kill",
+      "class": "RED_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "appm_5min",
+        "diff_appm_5",
+        "effective_play_time"
+      ],
+      "rule": "APPM 5 abaixo de 0.3 é NO_BET; entre 0.3 e 0.4 exige cautela extrema, independentemente de volume acumulado.",
+      "evidence": "pasted_pattern_summary",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:45-53",
+        "pasted_content_6.txt:57-70"
+      ]
+    },
+    {
+      "id": "P_FT_LINE_TIME_FEASIBILITY",
+      "label": "factibilidade_linha_tempo",
+      "class": "RED_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "minute",
+        "corners_total",
+        "asian_line",
+        "effective_play_time"
+      ],
+      "rule": "Linha alta com poucos minutos e poucos cantos atuais exige volume recente extraordinário; caso contrário, NO_BET.",
+      "evidence": "pasted_pattern_summary",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:45-53",
+        "pasted_content_6.txt:135-143"
+      ]
+    },
+    {
+      "id": "P_FT_TEAM_DIRECTION_REQUIRED",
+      "label": "direcao_do_time_pressionando",
+      "class": "NO_ENTRY_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "dominant_team",
+        "appm_5min",
+        "diff_appm_5",
+        "diff_pressao1"
+      ],
+      "rule": "Nunca usar APPM agregado sem identificar qual equipe pressiona e se o mercado é do time ou do total; direção ausente mantém o alerta em revisão.",
+      "evidence": "data_quality_rule",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:45-53",
+        "pasted_content_6.txt:99-117"
+      ]
+    },
+    {
+      "id": "P_FT_OUTLIER_REVIEW",
+      "label": "outlier_pressao_extrema",
+      "class": "NO_ENTRY_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "score_diff",
+        "appm_5min",
+        "diff_appm_5",
+        "corners_total"
+      ],
+      "rule": "Placar elástico não é desbloqueado por um único caso; pressão extrema deve gerar RISK_OUTLIER_REVIEW e não autorização automática.",
+      "evidence": "reviewed_postmortem",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_5.txt:123-151",
+        "pasted_content_6.txt:45-53"
+      ]
+    },
+    {
+      "id": "P_FT_PUSH_SEPARATE",
+      "label": "push_ft_separado",
+      "class": "PUSH_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "asian_line",
+        "corners_total",
+        "final_corners"
+      ],
+      "rule": "Push/reembolso permanece separado de Green e Red na avaliação e na memória.",
+      "evidence": "governance",
+      "confidence": "candidate",
+      "source_refs": [
+        "pasted_content_6.txt:45-53"
+      ]
+    },
+    {
+      "id": "P_HT_LATE_CORNER_SEQUENCE",
+      "label": "sequencia_cantos_fim_ht",
+      "class": "GREEN_PATTERN",
+      "window": "HT_35_TO_INTERVAL",
+      "features": [
+        "corners_timeline_recent",
+        "appm_5min",
+        "diff_pressao1",
+        "crosses_blocked_last_5m",
+        "stoppage_time"
+      ],
+      "rule": "Cantos em sequência a partir de 35’ com pressão e cruzamentos contemporâneos podem sustentar OBSERVE até ao intervalo; o padrão não autoriza entrada fora da janela.",
+      "evidence": "keep2_structured_postmortem",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:134-161"
+      ]
+    },
+    {
+      "id": "P_FT_ADDED_TIME_REQUIRED",
+      "label": "acrescimos_ft_obrigatorios",
+      "class": "NO_ENTRY_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "minute",
+        "stoppage_time",
+        "effective_play_time",
+        "match_status"
+      ],
+      "rule": "A análise FT deve confirmar acréscimos e estado real da partida; 90’ regulamentares não significam encerramento antes do apito final.",
+      "evidence": "keep2_operational_rule",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:114-132",
+        "DocumentodoGoogleKeep(2).md:319-357"
+      ]
+    },
+    {
+      "id": "P_FT_CORNERS_STAGNATION_AFTER_86",
+      "label": "estagnacao_apos_86",
+      "class": "RED_PATTERN",
+      "window": "FT_85_TO_END",
+      "features": [
+        "minutes_since_last_corner",
+        "appm_5min",
+        "corners_total",
+        "line_required"
+      ],
+      "rule": "Volume acumulado alto não compensa estagnação desde 86’; se o ritmo recente cai, manter NO_BET mesmo com urgência aparente.",
+      "evidence": "keep2_red_postmortem",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:114-132"
+      ]
+    },
+    {
+      "id": "P_KNOCKOUT_AGGREGATE_URGENCY",
+      "label": "urgencia_agregado_eliminatoria",
+      "class": "GREEN_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "aggregate_score",
+        "score_diff",
+        "dangerous_attacks",
+        "crosses",
+        "shots_total"
+      ],
+      "rule": "Necessidade no agregado pode elevar urgência, mas só conta com pressão observável, ataques perigosos e conversão lateral no snapshot.",
+      "evidence": "keep2_structured_examples",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:20-67",
+        "DocumentodoGoogleKeep(2).md:345-357"
+      ]
+    },
+    {
+      "id": "P_HIGH_VOLUME_NOT_ENOUGH",
+      "label": "volume_sem_conversao",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "possession",
+        "attacks",
+        "dangerous_attacks",
+        "shots_on_target",
+        "crosses_blocked_last_5m"
+      ],
+      "rule": "Posse e ataques totais altos sem finalização/bloqueio/conversão lateral não devem elevar o sinal sozinhos.",
+      "evidence": "keep2_red_examples",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:77-111",
+        "DocumentodoGoogleKeep(2).md:361-443"
+      ]
+    },
+    {
+      "id": "P_HIGH_LINE_TIME_FEASIBILITY",
+      "label": "linha_alta_infactivel",
+      "class": "RED_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "line_required",
+        "corners_total",
+        "minute",
+        "appm_5min",
+        "effective_play_time"
+      ],
+      "rule": "Linha alta perto do fim exige calcular cantos faltantes por tempo efetivo; se o requisito for incompatível com o ritmo recente, NO_BET.",
+      "evidence": "keep2_red_examples",
+      "confidence": "candidate",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:79-111",
+        "DocumentodoGoogleKeep(2).md:100-111"
+      ]
+    },
+    {
+      "id": "P_TRAVAS_NEVER_DISARMED_BY_TEXT",
+      "label": "travas_nao_desarmar_por_relato",
+      "class": "GOVERNANCE_PATTERN",
+      "window": "BOTH",
+      "features": [
+        "source_provenance",
+        "policy_gate",
+        "safety_state"
+      ],
+      "rule": "Relatos que dizem que P004/P005 foram desarmadas são pós-mortem e não podem instruir o agente a desativar travas; qualquer mudança exige política explícita e validação.",
+      "evidence": "safety_review",
+      "confidence": "high",
+      "source_refs": [
+        "DocumentodoGoogleKeep(2).md:153-161",
+        "DocumentodoGoogleKeep(2).md:214-226"
+      ]
+    }
+  ],
+  "governance": {
+    "use_as": "advisory_pattern_memory",
+    "do_not_use_as": [
+      "guarantee",
+      "automatic_execution",
+      "ground_truth_without_snapshot"
+    ],
+    "label_field_never_feature": [
+      "resultado",
+      "status_final",
+      "retorno",
+      "postmortem"
+    ],
+    "promotion_requires": [
+      "more_labeled_snapshots_per_window",
+      "temporal_holdout",
+      "calibration",
+      "shadow_validation"
+    ],
+    "last_curated": "2026-08-22"
+  },
+  "league_priors": {
+    "BRASILEIRAO_2026": {
+      "source": "BRASILEIRAO_2026_BASE_CONHECIMENTO_IA.md",
+      "status": "reviewed_candidate_prior",
+      "scope": "pre_match_context_only",
+      "series": {
+        "Serie A": {
+          "matches": 380,
+          "avg_total_corners": 11.15,
+          "avg_goals": 3.25
+        },
+        "Serie B": {
+          "matches": 456,
+          "avg_total_corners": 10.68,
+          "avg_goals": 2.95
+        }
+      },
+      "temporal_distribution": {
+        "first_half_pct": 42,
+        "second_half_pct": 58,
+        "minute_31_45_pct": 16,
+        "minute_76_90_pct": 25
+      },
+      "result_context": {
+        "team_winning_avg_corners": 5.2,
+        "draw_avg_corners": 5.8,
+        "team_losing_avg_corners": 6.5
+      },
+      "team_baselines": {
+        "Serie A": {
+          "Flamengo": {
+            "corners_for": 7.1,
+            "corners_against": 4.5,
+            "possession": 61.5,
+            "shots": 16.2,
+            "xg": 2.05
+          },
+          "Palmeiras": {
+            "corners_for": 6.8,
+            "corners_against": 4.2,
+            "possession": 58.2,
+            "shots": 14.3,
+            "xg": 1.82
+          },
+          "Atletico-MG": {
+            "corners_for": 6.2,
+            "corners_against": 4.7,
+            "possession": 57.5,
+            "shots": 14.8,
+            "xg": 1.85
+          },
+          "Corinthians": {
+            "corners_for": 6.0,
+            "corners_against": 5.0,
+            "possession": 54.8,
+            "shots": 13.5,
+            "xg": 1.68
+          }
+        },
+        "Serie B": {
+          "Cuiaba": {
+            "corners_for": 5.89,
+            "corners_against": 5.2,
+            "possession": 50.8,
+            "shots": 12.2,
+            "xg": 1.48
+          },
+          "Fortaleza": {
+            "corners_for": 5.84,
+            "corners_against": 5.1,
+            "possession": 53.2,
+            "shots": 13.0,
+            "xg": 1.62
+          },
+          "Chapecoense": {
+            "corners_for": 5.79,
+            "corners_against": 5.3,
+            "possession": 50.2,
+            "shots": 11.8,
+            "xg": 1.45
+          }
+        }
+      },
+      "formula_policy": "basic_prior_only_not_calibrated_probability",
+      "confidence": "candidate",
+      "do_not_use_as": [
+        "ground_truth",
+        "automatic_bet_recommendation",
+        "live_feature_after_match"
+      ]
+    }
+  },
+  "historical_context_series_b_2026": {
+    "source_file": "BRASILEIRAO_SERIE_B_2026_DADOS_REAIS_OFICIAIS.md",
+    "summary_file": "pasted_content_10.txt",
+    "status": "UNVERIFIED_HISTORICAL_SNAPSHOT",
+    "confidence": "low",
+    "as_of_claimed": "2026-08 / 21 rodadas",
+    "use_policy": "context_only_pre_match_explanation",
+    "excluded_from": [
+      "live_corner_score",
+      "training_labels",
+      "calibration",
+      "official_standings",
+      "automatic_recommendation"
+    ],
+    "data": {
+      "matches_claimed": 210,
+      "goals_claimed": 486,
+      "avg_goals_claimed": 2.31,
+      "promotion_zone_claimed": [
+        "Criciuma",
+        "Juventude",
+        "Vila Nova",
+        "Operario-PR"
+      ],
+      "relegation_zone_claimed": [
+        "Londrina",
+        "Ceara",
+        "Ponte Preta",
+        "America-MG"
+      ],
+      "team_context_claimed": {
+        "Criciuma": {
+          "matches": 21,
+          "points": 40,
+          "goals_for": 23,
+          "goals_against": 14
+        },
+        "Juventude": {
+          "matches": 21,
+          "points": 38,
+          "goals_for": 23,
+          "goals_against": 12
+        },
+        "Vila Nova": {
+          "matches": 23,
+          "points": 40,
+          "goals_for": 35,
+          "goals_against": 25
+        },
+        "Operario-PR": {
+          "matches": 19,
+          "points": 35,
+          "goals_for": 27,
+          "goals_against": 22
+        },
+        "Fortaleza": {
+          "matches": 19,
+          "points": 31,
+          "goals_for": 22,
+          "goals_against": 19
+        },
+        "Novorizontino": {
+          "matches": 19,
+          "points": 30,
+          "goals_for": 28,
+          "goals_against": 18
+        },
+        "Ponte Preta": {
+          "matches": 19,
+          "points": 8,
+          "goals_for": 14,
+          "goals_against": 38
+        },
+        "America-MG": {
+          "matches": 19,
+          "points": 8,
+          "goals_for": 13,
+          "goals_against": 31
+        }
+      },
+      "claimed_priors": {
+        "home_factor": 1.12,
+        "away_factor": 0.88,
+        "average_goals_less_than_serie_a": true
+      }
+    },
+    "audit_flags": [
+      "points_inconsistent_for_vila_nova",
+      "mixed_match_counts",
+      "conflicts_with_public_espn_snapshot",
+      "no_corner_live_features",
+      "source_claim_not_independently_proven"
+    ]
+  },
+  "attachment_curation_policy": {
+    "approved_context_only": [
+      "BRASILEIRAO_2026_DADOS_REAIS_OFICIAIS.md",
+      "BRASILEIRAO_SERIE_B_2026_DADOS_REAIS_OFICIAIS.md"
+    ],
+    "summary_reference_only": [
+      "pasted_content_9.txt",
+      "pasted_content_10.txt",
+      "pasted_content_11.txt"
+    ],
+    "rejected_from_training": [
+      "BRASILEIRAO_2026_AGENTE_IA_TREINAMENTO.py"
+    ],
+    "allowed_training_sources": [
+      "real_labeled_jsonl_with_temporal_order_and_validated_labels"
+    ],
+    "forbidden_training_sources": [
+      "synthetic_poisson_outcomes",
+      "post_match_fields_as_features",
+      "unverified_table_snapshots"
+    ],
+    "window_policy": {
+      "HT_35_TO_INTERVAL": "advisory_only_until_walk_forward_pass",
+      "FT_85_TO_END": "advisory_only_until_walk_forward_pass"
+    },
+    "labels": [
+      "GREEN",
+      "RED",
+      "PUSH",
+      "PRE_ALERT",
+      "NO_ENTRY",
+      "UNKNOWN"
+    ],
+    "guards": {
+      "paper_trade": true,
+      "execution_allowed": false
+    }
+  }
+}

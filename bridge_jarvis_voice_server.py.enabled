@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:jarvis_voice_server.py
+path=bridge/jarvis_voice_server.py
+status=enabled
+paper_trade=true

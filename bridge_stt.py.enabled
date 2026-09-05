@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:stt.py
+path=bridge/jarvis/modules/stt.py
+status=enabled
+paper_trade=true

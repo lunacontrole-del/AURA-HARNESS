@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:neural_tts.py
+path=bridge/jarvis/modules/neural_tts.py
+status=enabled
+paper_trade=true

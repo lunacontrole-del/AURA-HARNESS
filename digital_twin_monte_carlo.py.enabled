@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:digital_twin_monte_carlo.py
+path=engine/digital_twin_monte_carlo.py
+status=enabled
+paper_trade=true

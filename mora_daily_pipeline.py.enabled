@@ -1,0 +1,5 @@
+enabled=true
+agent_id=agents:mora_master_agent
+path=engine/mora_daily_pipeline.py
+status=enabled
+paper_trade=true

@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:browser_agent.py
+path=engine/agents/browser_agent.py
+status=enabled
+paper_trade=true

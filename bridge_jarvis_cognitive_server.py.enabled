@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:jarvis_cognitive_server.py
+path=bridge/cognitive/jarvis_cognitive_server.py
+status=enabled
+paper_trade=true

@@ -1,0 +1,26 @@
+# GLM Analysis Agent — AURA QUANT-X V25
+backend: "ollama"
+api_base: "http://127.0.0.1:11434/v1"
+model_name: "glm-4.7-flash"
+api_key: "ollama"
+request_timeout: 30.0
+max_retries: 3
+retry_delay: 1.0
+max_concurrent_requests: 5
+bridge_url: "http://127.0.0.1:8080"
+engine_ws_url: "ws://127.0.0.1:8765"
+paper_trade: true
+execution_allowed: false
+windows:
+  - "35_ht"
+  - "85_ft"
+cache_ttl: 60
+max_history: 1000
+
+# --- Tunaveis (ThresholdTuner) ---
+trend_rising_threshold: 4
+excitation_threshold: 0.30
+corner_rate_threshold: 2
+entra_min_triggers: 2
+entra_min_confidence: 0.70
+entra_min_score: 70

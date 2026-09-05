@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:pre_treinar_gpu.py
+path=engine/pre_treinar_gpu.py
+status=enabled
+paper_trade=true

@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:aura_quant_x_master.py
+path=engine/aura_quant_x_master.py
+status=enabled
+paper_trade=true

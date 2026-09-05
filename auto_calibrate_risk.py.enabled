@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:auto_calibrate_risk.py
+path=engine/modules/auto_calibrate_risk.py
+status=enabled
+paper_trade=true

@@ -1,0 +1,5 @@
+enabled=true
+agent_id=sre:omnipotent_health_profiler
+path=engine/sre/omnipotent_health_profiler.py
+status=enabled
+paper_trade=true

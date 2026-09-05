@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:tts.py
+path=bridge/jarvis/modules/tts.py
+status=enabled
+paper_trade=true

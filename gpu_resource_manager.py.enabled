@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:gpu_resource_manager.py
+path=bridge/jarvis/gpu_resource_manager.py
+status=enabled
+paper_trade=true

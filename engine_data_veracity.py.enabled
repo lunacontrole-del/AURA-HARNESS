@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:data_veracity.py
+path=engine/data_veracity.py
+status=enabled
+paper_trade=true

@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:tg_voice_pipeline.py
+path=bridge/telegram/tg_voice_pipeline.py
+status=enabled
+paper_trade=true

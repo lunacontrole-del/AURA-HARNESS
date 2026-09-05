@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:gpu_resource_manager.py
+path=engine/gpu_resource_manager.py
+status=enabled
+paper_trade=true

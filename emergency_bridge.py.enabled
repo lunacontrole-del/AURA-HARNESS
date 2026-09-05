@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:emergency_bridge.py
+path=bridge/emergency_bridge.py
+status=enabled
+paper_trade=true

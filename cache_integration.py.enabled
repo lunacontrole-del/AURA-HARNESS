@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:cache_integration.py
+path=engine/core/cache_integration.py
+status=enabled
+paper_trade=true

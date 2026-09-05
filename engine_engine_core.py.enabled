@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:engine_core.py
+path=engine/engine_core.py
+status=enabled
+paper_trade=true

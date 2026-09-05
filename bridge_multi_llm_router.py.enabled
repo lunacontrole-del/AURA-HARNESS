@@ -1,0 +1,5 @@
+enabled=true
+agent_id=bridge:multi_llm_router.py
+path=bridge/cognitive/multi_llm_router.py
+status=enabled
+paper_trade=true

@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:corner_intelligence.py
+path=engine/corner_intelligence.py
+status=enabled
+paper_trade=true

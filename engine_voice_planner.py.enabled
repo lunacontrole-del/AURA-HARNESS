@@ -1,0 +1,5 @@
+enabled=true
+agent_id=engine:voice_planner.py
+path=engine/voice_planner.py
+status=enabled
+paper_trade=true
