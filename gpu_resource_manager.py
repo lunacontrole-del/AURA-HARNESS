@@ -1,252 +1,213 @@
-"""AURA QUANT-X GPU Resource Manager 12.6.2.
+"""Voice GPU resource policy, VRAM monitor and diagnostics.
 
-Windows laptops often expose Intel integrated graphics as GPU 0 in Task Manager
-and NVIDIA as GPU 1. CUDA numbering is independent: the RTX is normally
-cuda:0 when it is the only CUDA-capable adapter. This module therefore selects
-CUDA by capability, not by Windows Task Manager number.
-
-Policy for 6 GB RTX-class laptops:
-- NVIDIA CUDA = AI/voice/quant compute.
-- Intel UHD = display/system only; it is not a CUDA peer and cannot add VRAM.
-- Voice profile prefers a 3B local LLM to leave VRAM headroom for Whisper+XTTS.
-- Diagnostics expose both Windows adapter labels and CUDA adapter details.
+Política AURA (RTX 4050 6 GB híbrida):
+- NVIDIA = IA (Whisper + Ollama). Intel UHD = display/sistema.
+- NÃO maximizar VRAM à força: encher 6 GB aumenta OOM e latência.
+- Maximizar QUALIDADE = usar a GPU com prioridade alta, modelos no sweet spot,
+  serializar fases pesadas e manter Ollama residente (keep_alive).
 """
 from __future__ import annotations
 
-import json
-import logging
 import os
-import platform
 import shutil
 import subprocess
-import tempfile
 import threading
-from contextlib import contextmanager
-from pathlib import Path
-from typing import Any, Dict, Iterator, List
-
-logger = logging.getLogger("aura.gpu_governor")
+import time
+from typing import Any, Dict, List, Optional
 
 try:
-    import torch  # type: ignore
-    TORCH_AVAILABLE = True
+    import torch
 except Exception:
-    torch = None  # type: ignore
-    TORCH_AVAILABLE = False
+    torch = None
 
-try:
-    import pynvml  # type: ignore
-    pynvml.nvmlInit()
-    NVML_AVAILABLE = True
-except Exception:
-    pynvml = None  # type: ignore
-    NVML_AVAILABLE = False
+_GPU_LOCK = threading.RLock()
+_VRAM_HISTORY: List[Dict[str, Any]] = []
+_HISTORY_MAX = 60  # ~últimos pontos de amostragem
 
 
-def _ps_gpu_inventory() -> List[Dict[str, Any]]:
-    if platform.system() != "Windows" or not shutil.which("powershell"):
-        return []
-    cmd = [
-        "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
-        "Get-CimInstance Win32_VideoController | "
-        "Select-Object Name,AdapterRAM,DriverVersion,PNPDeviceID | "
-        "ConvertTo-Json -Compress"
-    ]
+def _nvidia_smi_info() -> Dict[str, Any]:
+    """Descobre hardware NVIDIA sem exigir PyTorch no venv da Bridge."""
+    exe = shutil.which("nvidia-smi")
+    if not exe:
+        return {}
     try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
-        if p.returncode != 0 or not p.stdout.strip():
-            return []
-        data = json.loads(p.stdout)
-        if isinstance(data, dict):
-            data = [data]
-        return data if isinstance(data, list) else []
-    except Exception:
-        return []
-
-
-def cuda_info() -> Dict[str, Any]:
-    try:
-        import torch
-    except Exception:
-        return {"available": False, "reason": "torch_unavailable"}
-    if not torch.cuda.is_available():
-        return {"available": False, "reason": "cuda_unavailable", "device_count": 0}
-    count = torch.cuda.device_count()
-    devices = []
-    for idx in range(count):
-        props = torch.cuda.get_device_properties(idx)
-        devices.append({
-            "cudaIndex": idx,
-            "name": props.name,
-            "vramGB": round(props.total_memory / (1024 ** 3), 2),
-            "computeCapability": f"{props.major}.{props.minor}",
-        })
-    return {"available": True, "device_count": count, "devices": devices}
-
-
-def resolve_cuda_device() -> str:
-    """Return the best CUDA device. NVIDIA is CUDA-capable; Intel UHD is not."""
-    info = cuda_info()
-    if not info.get("available"):
-        return "cpu"
-    # Prefer the largest CUDA device; on this laptop this is the RTX 4050.
-    best = max(info["devices"], key=lambda x: x["vramGB"])
-    os.environ.setdefault("AURA_CUDA_DEVICE", str(best["cudaIndex"]))
-    return f"cuda:{best['cudaIndex']}"
-
-
-def recommended_voice_llm(vram_gb: float) -> str:
-    # 6 GB is a concurrency budget, not a reason to load an 8B model alongside
-    # XTTS + Whisper. Keep headroom for the voice pipeline.
-    if vram_gb >= 10:
-        return "llama3.1:8b-instruct-q8_0"
-    if vram_gb >= 8:
-        return "llama3.1:8b"
-    return "llama3.2:3b"
-
-
-class GPUResourceManager:
-    """Defensive VRAM governor for optional CUDA inference.
-
-    The default ceiling is 85% of detected VRAM. The manager never allocates
-    tensors, starts drivers, kills processes or installs dependencies.
-    Callers that use ``inference_slot`` also coordinate through a small
-    process-shared lock file; callers outside the protocol are not preempted.
-    """
-
-    def __init__(self, safe_fraction: float = 0.85, lock_path: str | None = None) -> None:
-        if not 0.5 <= safe_fraction <= 0.95:
-            raise ValueError("safe_fraction must be between 0.5 and 0.95")
-        self.safe_fraction = safe_fraction
-        self._thread_lock = threading.Lock()
-        default_lock = Path(tempfile.gettempdir()) / "aura_quant_x_gpu_inference.lock"
-        self.lock_path = Path(lock_path or os.environ.get("AURA_GPU_LOCK_PATH", str(default_lock)))
-        self.vram_total_gb = self._detect_total_gb()
-        self.vram_safe_limit_gb = round(self.vram_total_gb * self.safe_fraction, 4)
-
-    def _detect_total_gb(self) -> float:
-        devices = cuda_info().get("devices") or []
-        return float(max((item.get("vramGB", 0.0) for item in devices), default=0.0))
-
-    def _nvml_memory(self) -> tuple[float, float] | None:
-        if not NVML_AVAILABLE or pynvml is None:
-            return None
-        try:
-            handle = pynvml.nvmlDeviceGetHandleByIndex(0)
-            memory = pynvml.nvmlDeviceGetMemoryInfo(handle)
-            return memory.used / (1024 ** 3), memory.total / (1024 ** 3)
-        except Exception:
-            return None
-
-    def get_current_vram_usage_gb(self) -> float:
-        nvml = self._nvml_memory()
-        if nvml is not None:
-            return round(nvml[0], 4)
-        if TORCH_AVAILABLE and torch is not None:
-            try:
-                if torch.cuda.is_available():
-                    return round(torch.cuda.memory_reserved() / (1024 ** 3), 4)
-            except Exception:
-                pass
-        return 0.0
-
-    def is_safe_to_infer(self, required_gb: float = 1.0) -> bool:
-        if required_gb < 0:
-            raise ValueError("required_gb must be non-negative")
-        if self.vram_safe_limit_gb <= 0:
-            return False
-        current = self.get_current_vram_usage_gb()
-        projected = current + required_gb
-        safe = projected <= self.vram_safe_limit_gb
-        if not safe:
-            logger.warning(
-                "VRAM pressure: current=%.2fGB required=%.2fGB limit=%.2fGB",
-                current, required_gb, self.vram_safe_limit_gb,
-            )
-        return safe
-
-    def get_best_device(self, required_gb: float = 1.0) -> str:
-        candidate = resolve_cuda_device()
-        if candidate == "cpu" or not self.is_safe_to_infer(required_gb):
-            return "cpu"
-        return candidate
-
-    @contextmanager
-    def inference_slot(self, required_gb: float = 1.0) -> Iterator[str]:
-        """Reserve an inference slot and release it deterministically."""
-        self._thread_lock.acquire()
-        lock_handle = None
-        try:
-            self.lock_path.parent.mkdir(parents=True, exist_ok=True)
-            lock_handle = self.lock_path.open("a+b")
-            if lock_handle.seek(0, 2) == 0:
-                lock_handle.write(b"0")
-                lock_handle.flush()
-            lock_handle.seek(0)
-            if os.name == "nt":
-                import msvcrt
-                msvcrt.locking(lock_handle.fileno(), msvcrt.LK_LOCK, 1)
-            else:
-                import fcntl
-                fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
-            yield self.get_best_device(required_gb)
-        finally:
-            if lock_handle is not None:
-                try:
-                    if os.name == "nt":
-                        import msvcrt
-                        lock_handle.seek(0)
-                        msvcrt.locking(lock_handle.fileno(), msvcrt.LK_UNLCK, 1)
-                    else:
-                        import fcntl
-                        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
-                except Exception:
-                    logger.debug("GPU lock release failed", exc_info=True)
-                lock_handle.close()
-            if TORCH_AVAILABLE and torch is not None:
-                try:
-                    if torch.cuda.is_available():
-                        torch.cuda.empty_cache()
-                except Exception:
-                    pass
-            self._thread_lock.release()
-
-    def health(self, required_gb: float = 1.5) -> Dict[str, Any]:
-        current = self.get_current_vram_usage_gb()
-        total = self.vram_total_gb
-        usage_percent = round((current / total) * 100, 1) if total > 0 else 0.0
-        status_name = "NO_GPU" if total <= 0 else ("CRITICAL" if usage_percent > 90 else "WARNING" if usage_percent > 75 else "OK")
+        raw = subprocess.check_output(
+            [
+                exe,
+                "--query-gpu=name,memory.total,memory.used,memory.free,utilization.gpu,utilization.memory,driver_version,temperature.gpu",
+                "--format=csv,noheader,nounits",
+            ],
+            text=True,
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+        ).strip().splitlines()
+        if not raw:
+            return {}
+        parts = [x.strip() for x in raw[0].split(",")]
+        name = parts[0]
+        total_mib = float(parts[1]) if len(parts) > 1 else 0.0
+        used_mib = float(parts[2]) if len(parts) > 2 else 0.0
+        free_mib = float(parts[3]) if len(parts) > 3 else max(0.0, total_mib - used_mib)
+        util_gpu = float(parts[4]) if len(parts) > 4 and parts[4] not in ("", "[N/A]") else None
+        util_mem = float(parts[5]) if len(parts) > 5 and parts[5] not in ("", "[N/A]") else None
+        driver = parts[6] if len(parts) > 6 else None
+        temp = float(parts[7]) if len(parts) > 7 and parts[7] not in ("", "[N/A]") else None
         return {
-            "status": status_name,
-            "usage_percent": usage_percent,
-            "used_gb": round(current, 3),
-            "total_gb": round(total, 3),
-            "safe_limit_gb": round(self.vram_safe_limit_gb, 3),
-            "recommended_device": self.get_best_device(required_gb),
-            "required_gb": required_gb,
-            "cross_process_lock": str(self.lock_path),
+            "nvidiaDetected": True,
+            "name": name,
+            "vramGB": round(total_mib / 1024.0, 2),
+            "usedGB": round(used_mib / 1024.0, 2),
+            "freeGB": round(free_mib / 1024.0, 2),
+            "utilGpuPct": util_gpu,
+            "utilMemPct": util_mem,
+            "temperatureC": temp,
+            "driver": driver,
         }
+    except Exception as exc:
+        return {"nvidiaDetected": False, "smiError": str(exc)}
 
 
-GPU_GOVERNOR = GPUResourceManager()
-
-
-def get_best_inference_device(required_gb: float = 1.5) -> str:
-    return GPU_GOVERNOR.get_best_device(required_gb)
-
-
-def status() -> Dict[str, Any]:
-    ci = cuda_info()
+def device_info() -> Dict[str, Any]:
+    smi = _nvidia_smi_info()
+    if torch is None or not torch.cuda.is_available():
+        if smi.get("nvidiaDetected"):
+            return {
+                **smi,
+                "cuda": False,
+                "cudaReady": False,
+                "device": "cpu",
+                "reason": "RTX detectada por nvidia-smi, mas PyTorch CUDA não está disponível neste venv",
+            }
+        return {"cuda": False, "cudaReady": False, "device": "cpu", "reason": "CUDA indisponível"}
+    idx = max(
+        range(torch.cuda.device_count()),
+        key=lambda i: torch.cuda.get_device_properties(i).total_memory,
+    )
+    p = torch.cuda.get_device_properties(idx)
+    allocated = torch.cuda.memory_allocated(idx) / (1024 ** 3)
+    reserved = torch.cuda.memory_reserved(idx) / (1024 ** 3)
     return {
-        "platform": platform.platform(),
-        "windowsAdapters": _ps_gpu_inventory(),
-        "cuda": ci,
-        "governor": GPU_GOVERNOR.health(required_gb=1.5),
-        "policy": {
-            "safeFraction": GPU_GOVERNOR.safe_fraction,
-            "taskManagerGPU0": "Intel UHD / display-system",
-            "taskManagerGPU1": "NVIDIA RTX / AI compute",
-            "cudaDevice": "largest CUDA-capable adapter",
-            "note": "Windows GPU numbers are not CUDA device numbers; Intel UHD cannot be combined with RTX VRAM for CUDA."
-        },
+        **smi,
+        "nvidiaDetected": True,
+        "cuda": True,
+        "cudaReady": True,
+        "device": f"cuda:{idx}",
+        "name": p.name,
+        "vramGB": round(p.total_memory / (1024 ** 3), 2),
+        "allocatedGB": round(allocated, 2),
+        "reservedGB": round(reserved, 2),
     }
+
+
+def sample_vram(note: str = "") -> Dict[str, Any]:
+    """Amostra VRAM/utilização em tempo real e guarda histórico curto."""
+    info = device_info()
+    point = {
+        "ts": time.time(),
+        "note": note,
+        "usedGB": info.get("usedGB"),
+        "freeGB": info.get("freeGB"),
+        "allocatedGB": info.get("allocatedGB"),
+        "reservedGB": info.get("reservedGB"),
+        "utilGpuPct": info.get("utilGpuPct"),
+        "utilMemPct": info.get("utilMemPct"),
+        "temperatureC": info.get("temperatureC"),
+        "vramGB": info.get("vramGB"),
+        "name": info.get("name"),
+        "cudaReady": info.get("cudaReady"),
+    }
+    _VRAM_HISTORY.append(point)
+    if len(_VRAM_HISTORY) > _HISTORY_MAX:
+        del _VRAM_HISTORY[0 : len(_VRAM_HISTORY) - _HISTORY_MAX]
+    return point
+
+
+def vram_snapshot() -> Dict[str, Any]:
+    """Snapshot para health/diagnóstico (tempo real + histórico)."""
+    current = sample_vram("snapshot")
+    hist = list(_VRAM_HISTORY[-12:])
+    used_vals = [h["usedGB"] for h in hist if isinstance(h.get("usedGB"), (int, float))]
+    util_vals = [h["utilGpuPct"] for h in hist if isinstance(h.get("utilGpuPct"), (int, float))]
+    return {
+        "current": current,
+        "history": hist,
+        "peakUsedGB": round(max(used_vals), 2) if used_vals else None,
+        "avgUtilGpuPct": round(sum(util_vals) / len(util_vals), 1) if util_vals else None,
+        "policy": profile().get("name"),
+        "advice": _advice(current),
+    }
+
+
+def _advice(point: Dict[str, Any]) -> str:
+    used = point.get("usedGB")
+    total = point.get("vramGB") or 0
+    util = point.get("utilGpuPct")
+    temp = point.get("temperatureC")
+    if not total:
+        return "Sem NVIDIA detectada — Whisper/Ollama em CPU (qualidade e latência piores)."
+    # Térmico primeiro: protege hardware e performance sustentada
+    if isinstance(temp, (int, float)):
+        if temp >= 87:
+            return f"TEMPERATURA CRÍTICA ({temp:.0f}°C). Reduza carga: Whisper base, LLM 3B, pause XTTS; limpe ventilação."
+        if temp >= 80:
+            return f"GPU quente ({temp:.0f}°C). Performance pode cair por throttle. Monitore e mantenha quant q4 + batch moderado."
+    free = point.get("freeGB")
+    if isinstance(free, (int, float)) and free < 0.6:
+        return "VRAM apertada (<0.6 GB livre). Mantenha LLM 3B q4, Whisper base/small e Piper offline; evite XTTS."
+    if isinstance(util, (int, float)) and util < 15 and isinstance(used, (int, float)) and used < 2:
+        return "GPU subutilizada. Sistema saudável em idle; carga sobe no STT/LLM. Confirme Ollama keep_alive e Whisper em CUDA."
+    if isinstance(util, (int, float)) and util > 85:
+        return "GPU sob carga alta — normal durante STT/LLM. Se houver engasgo, serialize fases (já ativo via GPUSlot)."
+    if isinstance(temp, (int, float)) and temp >= 70:
+        return f"Orçamento OK · GPU {temp:.0f}°C (quente mas estável). Quant q4 recomendada."
+    return "Orçamento de VRAM equilibrado para voz de baixa latência."
+
+
+def cleanup() -> None:
+    # Não chamar empty_cache() a cada fala: aumenta latência com realocações.
+    return
+
+
+def profile() -> Dict[str, Any]:
+    info = device_info()
+    vram = float(info.get("vramGB") or 0)
+    # Sweet spot qualidade x estabilidade na 4050 6 GB
+    if 0 < vram <= 7:
+        return {
+            "name": "balanced_voice_6gb",
+            "policy": "NVIDIA RTX para IA; Intel UHD para display. Não saturar VRAM.",
+            "hardwareDetected": bool(info.get("nvidiaDetected")),
+            "cudaReady": bool(info.get("cudaReady", info.get("cuda"))),
+            "recommendedLLM": "llama3.2:3b",
+            "recommendedWhisper": "small" if vram >= 5.5 else "base",
+            "recommendedTTS": "edge_then_piper",
+            "xtts": False,
+            "vramTargetGB": round(max(1.0, vram - 1.2), 2),
+            "maxConcurrentGpuJobs": 1,
+        }
+    return {
+        "name": "full_gpu",
+        "policy": "VRAM folgada — pode subir LLM e Whisper",
+        "hardwareDetected": bool(info.get("nvidiaDetected")),
+        "cudaReady": bool(info.get("cudaReady", info.get("cuda"))),
+        "recommendedLLM": "auto",
+        "recommendedWhisper": "small",
+        "recommendedTTS": "edge_then_piper",
+        "xtts": vram >= 10,
+        "vramTargetGB": round(max(1.0, vram - 1.5), 2) if vram else 0,
+        "maxConcurrentGpuJobs": 2 if vram >= 12 else 1,
+    }
+
+
+class GPUSlot:
+    """Serializa fases pesadas de STT/TTS para reduzir picos de VRAM."""
+
+    def __enter__(self):
+        _GPU_LOCK.acquire()
+        sample_vram("gpu_slot_enter")
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        sample_vram("gpu_slot_exit")
+        cleanup()
+        _GPU_LOCK.release()
