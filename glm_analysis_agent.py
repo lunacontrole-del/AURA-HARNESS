@@ -59,7 +59,6 @@ class GLMConfig:
     model_name: str = "glm-4.7-flash"
     api_key: str = "ollama"
     request_timeout: float = 30.0
-    circuit_timeout_sec: float = 15.0
     max_retries: int = 3
     retry_delay: float = 1.0
     max_concurrent_requests: int = 5
@@ -80,35 +79,13 @@ class GLMClient:
         self._request_count = 0
         self._error_count = 0
         self._last_success: Optional[datetime] = None
-        self._fail_count = 0
-        self._circuit_open_until = 0.0
-        self._max_fails = 3
-        self._circuit_cooldown_sec = 60.0
         self._semaphore = asyncio.Semaphore(config.max_concurrent_requests)
-
-    def is_circuit_open(self) -> bool:
-        if time.time() >= self._circuit_open_until:
-            if self._circuit_open_until:
-                self._circuit_open_until = 0.0
-                self._fail_count = 0
-            return False
-        return True
-
-    def record_failure(self) -> None:
-        self._fail_count += 1
-        if self._fail_count >= self._max_fails:
-            self._circuit_open_until = time.time() + self._circuit_cooldown_sec
-            logger.critical("CIRCUIT BREAKER ABERTO: Ollama falhou 3x; fallback heurístico por 60s.")
-
-    def record_success(self) -> None:
-        self._fail_count = 0
-        self._circuit_open_until = 0.0
 
     async def start(self) -> None:
         if aiohttp is None:
             raise RuntimeError("aiohttp nao instalado (pip install aiohttp)")
         if self.session is None:
-            timeout = aiohttp.ClientTimeout(total=min(self.config.request_timeout, self.config.circuit_timeout_sec))
+            timeout = aiohttp.ClientTimeout(total=self.config.request_timeout)
             self.session = aiohttp.ClientSession(
                 timeout=timeout,
                 headers={
@@ -146,38 +123,19 @@ class GLMClient:
         except Exception as e:
             return {"healthy": False, "error": str(e), "paper_trade": True}
 
-    def build_payload(self, messages: List[Dict[str, str]],
-                      temperature: float = 0.1,
-                      max_tokens: int = 1500) -> Dict[str, Any]:
-        """Constrói payload limitado para proteger contexto/VRAM.
-
-        O limite é aplicado localmente; nenhum serviço é iniciado por este método.
-        """
-        history = list(messages or [])[-4:]
-        return {
-            "model": self.config.model_name,
-            "messages": history,
-            "temperature": float(temperature),
-            "max_tokens": int(max_tokens),
-            "stream": False,
-            "keep_alive": "0m",
-            "options": {"num_ctx": 2048, "temperature": 0.3, "top_p": 0.9},
-            "paper_trade": True,
-            "execution_allowed": False,
-        }
-
     async def chat_completion(
         self,
         messages: List[Dict[str, str]],
         temperature: float = 0.1,
         max_tokens: int = 1500,
     ) -> Optional[str]:
-        if self.is_circuit_open():
-            logger.warning("Ollama em cooldown; usando fallback heurístico.")
-            return None
         await self.start()
-        payload = self.build_payload(messages, temperature=temperature,
-                                     max_tokens=max_tokens)
+        payload = {
+            "model": self.config.model_name,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
         for attempt in range(self.config.max_retries):
             try:
                 async with self._semaphore:
@@ -190,18 +148,13 @@ class GLMClient:
                             data = await resp.json()
                             content = data["choices"][0]["message"]["content"]
                             self._last_success = datetime.now(timezone.utc)
-                            self.record_success()
                             return content
                         err = await resp.text()
-                        self.record_failure()
                         logger.warning("GLM HTTP %s try %s: %s", resp.status, attempt + 1, err[:200])
             except asyncio.TimeoutError:
-                self._error_count += 1
-                self.record_failure()
                 logger.warning("GLM timeout try %s", attempt + 1)
             except Exception as e:
                 self._error_count += 1
-                self.record_failure()
                 logger.error("GLM error try %s: %s", attempt + 1, e)
             await asyncio.sleep(self.config.retry_delay * (2 ** attempt))
         return None

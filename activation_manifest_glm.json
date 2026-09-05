@@ -1,0 +1,16 @@
+{
+  "agents:glm_analysis_v1": {
+    "path": "agents/glm_analysis_agent.py",
+    "status": "enabled",
+    "layer": "agents",
+    "actions": ["evaluate", "observe", "prepare", "no_bet", "glm_analyze", "glm_health_check", "glm_batch_process"],
+    "runnable_functions": ["evaluate", "glm_analyze", "glm_health_check", "glm_batch_process"],
+    "implementation_state": "runnable",
+    "paper_trade": true,
+    "execution_allowed": false,
+    "advisory_only": true,
+    "windows": ["35_ht", "85_ft"],
+    "model_backend": "glm-local",
+    "api_compatible": "openai"
+  }
+}

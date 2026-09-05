@@ -1,137 +1,115 @@
-# engine/agents/memory_store.py
-"""MemoryStore V2 — memoria persistente + calibracao. Stdlib only."""
+"""P2 Fase 6 — Memória autorizada com consentimento, origem, confiança, TTL e exclusão."""
 from __future__ import annotations
 
 import json
-import threading
-from collections import defaultdict
-from pathlib import Path
+import time
+import uuid
 from typing import Any, Dict, List, Optional
 
+from data_store import get_conn, init_schema, DB_PATH
 
-class MemoryStore:
-    def __init__(self, path: Path = Path("engine/data/glm_memory.json")):
-        self.path = Path(path)
-        self._lock = threading.Lock()
-        self._data: Dict[str, Any] = self._load()
 
-    def _load(self) -> Dict[str, Any]:
-        if self.path.exists():
-            try:
-                raw = json.loads(self.path.read_text(encoding="utf-8"))
-                if not isinstance(raw, dict):
-                    raise ValueError("not dict")
-                # ensure keys
-                raw.setdefault("trigger_stats", {})
-                raw.setdefault("league_profiles", {})
-                raw.setdefault("validated_patterns", [])
-                raw.setdefault(
-                    "calibration",
-                    {"predictions": 0, "correct": 0, "by_confidence_band": {}},
-                )
-                return raw
-            except Exception:
-                pass
-        return {
-            "trigger_stats": {},
-            "league_profiles": {},
-            "validated_patterns": [],
-            "calibration": {
-                "predictions": 0,
-                "correct": 0,
-                "by_confidence_band": {},
-            },
+def _ensure_table(path: Optional[str] = None) -> None:
+    path = path or DB_PATH
+    init_schema(path)
+    conn = get_conn(path)
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS memory_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            memory_id TEXT NOT NULL UNIQUE,
+            fixture_id TEXT,
+            content TEXT NOT NULL,
+            origin TEXT NOT NULL,
+            confidence REAL NOT NULL DEFAULT 0.5,
+            consent INTEGER NOT NULL DEFAULT 0,
+            ttl_sec INTEGER NOT NULL DEFAULT 86400,
+            created_at REAL NOT NULL,
+            expires_at REAL NOT NULL,
+            deleted INTEGER NOT NULL DEFAULT 0
+        )"""
+    )
+    conn.commit()
+    conn.close()
+
+
+def remember(
+    content: str,
+    *,
+    origin: str,
+    consent: bool,
+    confidence: float = 0.5,
+    ttl_sec: int = 86400,
+    fixture_id: str = "",
+    path: Optional[str] = None,
+) -> Dict[str, Any]:
+    if not consent:
+        return {"ok": False, "error": "CONSENT_REQUIRED"}
+    if not content or not origin:
+        return {"ok": False, "error": "content_and_origin_required"}
+    _ensure_table(path)
+    mid = f"mem_{uuid.uuid4().hex[:12]}"
+    now = time.time()
+    exp = now + max(60, int(ttl_sec))
+    conn = get_conn(path or DB_PATH)
+    conn.execute(
+        """INSERT INTO memory_records
+           (memory_id, fixture_id, content, origin, confidence, consent, ttl_sec, created_at, expires_at, deleted)
+           VALUES (?,?,?,?,?,?,?,?,?,0)""",
+        (mid, fixture_id, str(content)[:2000], str(origin)[:200], float(confidence), 1, int(ttl_sec), now, exp),
+    )
+    conn.commit()
+    conn.close()
+    return {"ok": True, "memory_id": mid, "expires_at": exp}
+
+
+def recall(
+    *,
+    fixture_id: str = "",
+    limit: int = 20,
+    path: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    _ensure_table(path)
+    now = time.time()
+    conn = get_conn(path or DB_PATH)
+    conn.row_factory = None
+    if fixture_id:
+        rows = conn.execute(
+            """SELECT memory_id, fixture_id, content, origin, confidence, expires_at
+               FROM memory_records
+               WHERE deleted=0 AND expires_at>? AND (fixture_id=? OR fixture_id='' OR fixture_id IS NULL)
+               ORDER BY created_at DESC LIMIT ?""",
+            (now, fixture_id, int(limit)),
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            """SELECT memory_id, fixture_id, content, origin, confidence, expires_at
+               FROM memory_records
+               WHERE deleted=0 AND expires_at>?
+               ORDER BY created_at DESC LIMIT ?""",
+            (now, int(limit)),
+        ).fetchall()
+    conn.close()
+    return [
+        {
+            "memory_id": r[0],
+            "fixture_id": r[1],
+            "content": r[2],
+            "origin": r[3],
+            "confidence": r[4],
+            "expires_at": r[5],
         }
+        for r in rows
+    ]
 
-    def record_decision(
-        self,
-        fixture_id: str,
-        triggers: List[str],
-        confidence: float,
-        decision: str,
-    ) -> None:
-        with self._lock:
-            key = "+".join(sorted(triggers)) if triggers else "none"
-            ts = self._data["trigger_stats"].setdefault(key, {"hits": 0, "total": 0})
-            ts["total"] = int(ts.get("total", 0)) + 1
-            band = f"{int(float(confidence) * 10) / 10:.1f}"
-            bands = self._data["calibration"].setdefault("by_confidence_band", {})
-            b = bands.setdefault(band, {"n": 0, "hits": 0})
-            b["n"] = int(b.get("n", 0)) + 1
 
-    def record_outcome(
-        self,
-        fixture_id: str,
-        triggers: List[str],
-        confidence: float,
-        was_correct: bool,
-    ) -> None:
-        with self._lock:
-            key = "+".join(sorted(triggers)) if triggers else "none"
-            ts = self._data["trigger_stats"].setdefault(key, {"hits": 0, "total": 0})
-            if was_correct:
-                ts["hits"] = int(ts.get("hits", 0)) + 1
-                self._data["calibration"]["correct"] = (
-                    int(self._data["calibration"].get("correct", 0)) + 1
-                )
-            self._data["calibration"]["predictions"] = (
-                int(self._data["calibration"].get("predictions", 0)) + 1
-            )
-            band = f"{int(float(confidence) * 10) / 10:.1f}"
-            bands = self._data["calibration"].setdefault("by_confidence_band", {})
-            b = bands.setdefault(band, {"n": 0, "hits": 0})
-            if was_correct:
-                b["hits"] = int(b.get("hits", 0)) + 1
-            self._flush()
-
-    def trigger_reliability(self, triggers: List[str]) -> Optional[float]:
-        key = "+".join(sorted(triggers)) if triggers else None
-        if not key:
-            return None
-        ts = self._data["trigger_stats"].get(key)
-        if not ts or int(ts.get("total", 0)) < 5:
-            return None
-        return float(ts["hits"]) / float(ts["total"])
-
-    def calibration_report(self) -> Dict:
-        out: Dict[str, Any] = {}
-        bands = self._data.get("calibration", {}).get("by_confidence_band", {})
-        for band, v in bands.items():
-            n = int(v.get("n", 0))
-            if n >= 10:
-                out[band] = {
-                    "declared": float(band),
-                    "actual": round(int(v.get("hits", 0)) / n, 3),
-                    "n": n,
-                }
-        return out
-
-    def best_patterns(self, min_n: int = 10, min_rate: float = 0.6) -> List[Dict]:
-        results = []
-        for key, ts in self._data.get("trigger_stats", {}).items():
-            total = int(ts.get("total", 0))
-            hits = int(ts.get("hits", 0))
-            if total >= min_n and hits / total >= min_rate:
-                results.append(
-                    {"triggers": key, "rate": round(hits / total, 3), "n": total}
-                )
-        return sorted(results, key=lambda x: -x["rate"])[:10]
-
-    def _flush(self) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".tmp")
-        # serialize trigger_stats as plain dict
-        payload = {
-            "trigger_stats": dict(self._data.get("trigger_stats") or {}),
-            "league_profiles": dict(self._data.get("league_profiles") or {}),
-            "validated_patterns": list(self._data.get("validated_patterns") or []),
-            "calibration": {
-                "predictions": self._data.get("calibration", {}).get("predictions", 0),
-                "correct": self._data.get("calibration", {}).get("correct", 0),
-                "by_confidence_band": dict(
-                    self._data.get("calibration", {}).get("by_confidence_band") or {}
-                ),
-            },
-        }
-        tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
-        tmp.replace(self.path)
+def forget(memory_id: str, path: Optional[str] = None) -> Dict[str, Any]:
+    _ensure_table(path)
+    conn = get_conn(path or DB_PATH)
+    cur = conn.execute(
+        "UPDATE memory_records SET deleted=1 WHERE memory_id=?",
+        (memory_id,),
+    )
+    conn.commit()
+    n = cur.rowcount
+    conn.close()
+    return {"ok": True, "deleted": n}
