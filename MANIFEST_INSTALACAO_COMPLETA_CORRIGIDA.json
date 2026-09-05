@@ -1,0 +1,11 @@
+{
+  "package": "AURA_QUANT_X_12.7.62_V27_INSTALACAO_COMPLETA_CORRIGIDA",
+  "created_at": "20260829T015838Z",
+  "version": "12.7.62-V27-OPERATOR-OS-RESTORED",
+  "homepage": "index.html",
+  "paper_trade": true,
+  "execution_allowed": false,
+  "overlays_replaced": 24,
+  "overlays_added": 87,
+  "fix": "Operator OS SPA restored as default homepage; forced redirect to Mesa Live removed"
+}
